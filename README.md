@@ -1,6 +1,6 @@
-# EDC Voice Agent - Outbound Call System
+# Voice Call Agent - Inbound And Outbound Call System
 
-This application provides both inbound and outbound call functionality for the Education Driving Center using Twilio and ElevenLabs for voice synthesis.
+This application provides both inbound and outbound call functionality using Twilio and ElevenLabs for voice synthesis.
 
 ## Features
 
@@ -109,8 +109,6 @@ Stores user registration and inquiry data:
 - `name`: User's full name
 - `dob`: Date of birth
 - `email`: Email address
-- `start_date`: Course start date
-- `course`: Selected course
 - `intent`: User's intent (inquiry, register, etc.)
 - `response`: User's response
 - `call_time`: Timestamp of the call
@@ -246,4 +244,5 @@ For issues and questions:
 2. Review Twilio and ElevenLabs documentation
 3. Check application logs for error messages
 4. Verify all environment variables are set correctly
+
 
