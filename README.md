@@ -31,7 +31,7 @@ An AI-driven **voice call automation system** that handles both inbound and outb
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/yourusername/voice_call_agent.git
+git clone https://github.com/damodar04/voice_call_agent.git
 cd voice_call_agent
 2. Install Dependencies
 bash
@@ -100,26 +100,12 @@ timestamp	When data was captured
 
 🤖 Integration with CRM for full automation
 
-📸 Demo (Optional)
-Add screenshots or short Loom video showing a call flow or logs.
-
 👨‍💻 Author
-Your Name
+Damodar Bhawsar
 AI & Automation Developer
-LinkedIn Profile | Portfolio
+Email : damodar.7974@gmail.com
 
-🪪 License
-This project is open-source and available under the MIT License.
 
-yaml
-Copy code
-
----
-
-Would you like me to:
-1. 📄 Generate this as a ready-to-upload `README.md` file,  
-**or**
-2. 🧾 Combine this with your project documentation (Word file) into a **PDF or DOCX summary** for LinkedIn upload?
 
 
 
