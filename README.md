@@ -1,113 +1,281 @@
-# 🗣️ Voice Call Agent (AI-Powered Call Handling System)
+# EDC Voice Agent - Outbound Call System
 
-An AI-driven **voice call automation system** that handles both inbound and outbound calls, interacts with users naturally using speech (powered by **Twilio** and **ElevenLabs**), and securely stores all responses in a structured database.
+This application provides both inbound and outbound call functionality for the Education Driving Center using Twilio and ElevenLabs for voice synthesis.
 
----
+## Features
 
-## 🚀 Features
+- **Inbound Calls**: Handle incoming calls with voice recognition and automated responses
+- **Outbound Calls**: Initiate outbound calls with proper call lifecycle management
+- **Call Tracking**: Log all call activities and status updates
+- **Voice Synthesis**: Use ElevenLabs for high-quality text-to-speech
+- **Database Storage**: Store user responses and call logs in SQLite
+- **Streamlit Dashboard**: Beautiful web interface for managing calls and viewing statistics
 
-- 📞 Handles **inbound & outbound calls** using Twilio
-- 🔊 Uses **ElevenLabs** for natural text-to-speech (TTS)
-- 🧠 Supports **multi-turn conversations** (Inquiry → Registration → Reschedule → Cancel)
-- 🗂️ Stores user responses (name, email, date, course type, etc.) in an SQLite database
-- 🌐 Fully compatible with local or cloud deployment (Ngrok / Render)
-- 🧩 Easily extendable to WhatsApp or email follow-ups
+## Prerequisites
 
----
+- Python 3.7+
+- Twilio Account (Account SID, Auth Token, Phone Number)
+- ElevenLabs API Key
+- ngrok or similar for webhook exposure (for production)
 
-## 🧰 Tech Stack
+## Environment Variables
 
-| Functionality | Tool/Service |
-|----------------|--------------|
-| Voice Calling | Twilio |
-| Speech-to-Text / Text-to-Speech | ElevenLabs API |
-| Backend | Flask (Python) |
-| Database | SQLite |
-| Deployment | Ngrok / Render / Railway |
+Create a `.env` file in the root directory with the following variables:
 
----
+```env
+# Twilio Configuration
+TWILIO_ACCOUNT_SID=your_twilio_account_sid
+TWILIO_AUTH_TOKEN=your_twilio_auth_token
+TWILIO_NUMBER=your_twilio_phone_number
 
-## ⚙️ Installation & Setup
-
-### 1. Clone the Repository
-```bash
-git clone https://github.com/damodar04/voice_call_agent.git
-cd voice_call_agent
-2. Install Dependencies
-bash
-Copy code
-pip install -r requirements.txt
-3. Create .env File
-In the root directory, create a .env file with the following:
-
-ini
-Copy code
-TWILIO_NUMBER=+1XXXXXXXXXX
-TWILIO_SID=your_twilio_sid
-TWILIO_AUTH=your_twilio_auth
+# ElevenLabs Configuration
 ELEVENLABS_API_KEY=your_elevenlabs_api_key
-4. Run the Application
-bash
-Copy code
-python app.py
-5. Expose Locally Using Ngrok
-bash
-Copy code
-ngrok http 5000
-Copy the https URL provided by ngrok (example: https://yourname.ngrok-free.app).
 
-🔁 Twilio Configuration
-✅ For Inbound Calls:
-Go to your Twilio Console → Phone Numbers → Active Number
+# Application Configuration
+BASE_URL=https://your-ngrok-url.ngrok.io
+```
 
-Under Voice & Fax → A CALL COMES IN, select Webhook
+## Installation
 
-Paste your ngrok URL + /voice
+1. **Install dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-arduino
-Copy code
-https://yourname.ngrok-free.app/voice
-📤 For Outbound Calls:
-In your Python code, trigger calls like:
+2. **Set up environment variables** (see above)
 
-python
-Copy code
-from twilio.rest import Client
-client = Client(account_sid, auth_token)
-call = client.calls.create(
-    to="+91XXXXXXXXXX",
-    from_="+1XXXXXXXXXX",
-    url="https://yourname.ngrok-free.app/voice"
-)
-🗂️ Database Structure
-The system automatically creates a SQLite database (responses.db) with stored user inputs:
+3. **Run the Flask application** (Backend):
+   ```bash
+   python app.py
+   ```
 
-Field	Description
-id	Unique ID
-name	User’s name
-email	User’s email
-date_of_birth	User’s DOB
-course_type	Service/course requested
-start_date	Preferred start date
-timestamp	When data was captured
+4. **Run the Streamlit Dashboard** (Web Interface):
+   ```bash
+   streamlit run streamlit_app.py
+   ```
+   Or use the batch file on Windows:
+   ```bash
+   run_streamlit.bat
+   ```
 
-🔮 Future Enhancements
-🌐 Web dashboard to view call logs & analytics
+5. **Expose your local server** (for webhooks):
+   ```bash
+   ngrok http 5000
+   ```
 
-💬 WhatsApp / SMS follow-up integration
+6. **Update your BASE_URL** in the `.env` file with the ngrok URL
 
-📅 Auto-scheduler for appointment confirmation
+## Usage
 
-🤖 Integration with CRM for full automation
+### Making Outbound Calls
 
-👨‍💻 Author
-Damodar Bhawsar
-AI & Automation Developer
-Email : damodar.7974@gmail.com
+#### Using the Streamlit Dashboard (Recommended)
 
+1. **Start the Flask backend**:
+   ```bash
+   python app.py
+   ```
 
+2. **Start the Streamlit dashboard**:
+   ```bash
+   streamlit run streamlit_app.py
+   ```
 
+3. **Open your browser** to `http://localhost:8501`
 
+4. **Features of the Streamlit Dashboard**:
+   - 📞 **Make Call**: Enter phone number or use preset buttons
+   - 📋 **Call History**: View all call logs with status and details
+   - 👥 **Users**: View user registration and inquiry data
+   - ⚙️ **Settings**: Manage presets and export data
 
+#### Using the API Endpoint
 
+```bash
+curl -X POST http://localhost:5000/make-call \
+  -H "Content-Type: application/json" \
+  -d '{"to_number": "+1234567890"}'
+```
+
+#### Using the Test Script
+
+```bash
+python test_outbound_call.py
+```
+
+### Call Management
+
+- **Get Call Status**: `GET /call-status/<call_sid>`
+- **Hang Up Call**: `POST /hangup/<call_sid>`
+
+### Webhook Endpoints
+
+- **Voice Webhook**: `/voice` - Handles incoming and outbound call voice interactions
+- **Call Status Webhook**: `/call-status` - Receives call status updates from Twilio
+
+## Twilio Configuration
+
+### Webhook URLs
+
+In your Twilio console, configure the following webhook URLs:
+
+1. **Voice Webhook URL**: `https://your-ngrok-url.ngrok.io/voice`
+2. **Status Callback URL**: `https://your-ngrok-url.ngrok.io/call-status`
+
+### Phone Number Configuration
+
+1. Go to your Twilio Console
+2. Navigate to Phone Numbers → Manage → Active numbers
+3. Click on your phone number
+4. Set the **Voice Configuration**:
+   - **Webhook URL**: `https://your-ngrok-url.ngrok.io/voice`
+   - **HTTP Method**: POST
+
+## Database Schema
+
+### Users Table
+Stores user registration and inquiry data:
+- `id`: Primary key
+- `name`: User's full name
+- `dob`: Date of birth
+- `email`: Email address
+- `start_date`: Course start date
+- `course`: Selected course
+- `intent`: User's intent (inquiry, register, etc.)
+- `response`: User's response
+- `call_time`: Timestamp of the call
+
+### Call Logs Table
+Tracks all call activities:
+- `id`: Primary key
+- `call_sid`: Twilio call SID
+- `to_number`: Destination phone number
+- `from_number`: Source phone number
+- `status`: Call status (initiated, ringing, in-progress, completed, etc.)
+- `direction`: Call direction (inbound/outbound)
+- `duration`: Call duration in seconds
+- `start_time`: Call start timestamp
+- `end_time`: Call end timestamp
+- `created_at`: Record creation timestamp
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Calls being cut immediately**:
+   - Check that your webhook URLs are accessible
+   - Verify Twilio credentials are correct
+   - Ensure your ngrok URL is updated in the environment variables
+   - Check the application logs for errors
+
+2. **Webhook not receiving requests**:
+   - Verify ngrok is running and the URL is correct
+   - Check that the webhook URL is properly configured in Twilio
+   - Ensure your application is running on the correct port
+
+3. **Voice synthesis not working**:
+   - Verify ElevenLabs API key is correct
+   - Check that the `static` directory exists and is writable
+   - Review application logs for TTS errors
+
+### Debugging
+
+1. **Enable debug logging**:
+   ```python
+   logging.basicConfig(level=logging.DEBUG)
+   ```
+
+2. **Check Twilio logs**:
+   - Go to Twilio Console → Monitor → Logs
+   - Look for call attempts and webhook delivery status
+
+3. **Monitor application logs**:
+   - Watch the console output when running the application
+   - Check for error messages and webhook requests
+
+## API Reference
+
+### POST /make-call
+Initiates an outbound call.
+
+**Request Body**:
+```json
+{
+  "to_number": "+1234567890"
+}
+```
+
+**Response**:
+```json
+{
+  "sid": "CA1234567890abcdef",
+  "status": "initiated",
+  "to": "+1234567890",
+  "from": "+0987654321"
+}
+```
+
+### GET /call-status/<call_sid>
+Gets the status of a specific call.
+
+**Response**:
+```json
+{
+  "sid": "CA1234567890abcdef",
+  "status": "in-progress",
+  "duration": 45,
+  "start_time": "2024-01-01T12:00:00Z",
+  "end_time": null
+}
+```
+
+### POST /hangup/<call_sid>
+Hangs up a specific call.
+
+**Response**:
+```json
+{
+  "success": true
+}
+```
+
+## Security Considerations
+
+1. **Environment Variables**: Never commit sensitive credentials to version control
+2. **Webhook Validation**: Consider implementing Twilio webhook signature validation
+3. **Rate Limiting**: Implement rate limiting for API endpoints
+4. **Input Validation**: Validate phone numbers and other inputs
+5. **HTTPS**: Use HTTPS in production for webhook endpoints
+
+## Development
+
+### Project Structure
+```
+edc_voice_agent/
+├── app.py                 # Main Flask application
+├── twilio_handler.py      # Twilio API wrapper
+├── database.py           # Database operations
+├── streamlit_app.py      # Streamlit dashboard UI
+├── requirements.txt       # Python dependencies
+├── test_outbound_call.py # Test script
+├── run_streamlit.bat     # Windows batch file to run Streamlit
+├── static/               # Static files (audio)
+├── templates/            # TwiML templates
+└── edc_responses.db      # SQLite database
+```
+
+### Adding New Features
+
+1. **New Voice Commands**: Add new conditions in the `/voice` route
+2. **Additional Call Actions**: Extend the `TwilioHandler` class
+3. **Database Operations**: Add new tables or modify existing schemas
+4. **Webhook Handlers**: Create new routes for additional webhook types
+
+## Support
+
+For issues and questions:
+1. Check the troubleshooting section above
+2. Review Twilio and ElevenLabs documentation
+3. Check application logs for error messages
+4. Verify all environment variables are set correctly
 
